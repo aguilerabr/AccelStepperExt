@@ -23,10 +23,11 @@ void dump(uint8_t* p, int l)
 void AccelStepper::moveTo(long absolute)
 {
     if (_targetPos != absolute)
-    {
-	_targetPos = absolute;
-	computeNewSpeed();
-	// compute new n?
+    {   
+        if (_autoEnable) enableOutputs();
+        _targetPos = absolute;
+        computeNewSpeed();
+        // compute new n?
     }
 }
 
@@ -103,11 +104,13 @@ unsigned long AccelStepper::computeNewSpeed()
 
     if (distanceTo == 0 && stepsToStop <= 1)
     {
-	// We are at the target and its time to stop
-	_stepInterval = 0;
-	_speed = 0.0;
-	_n = 0;
-	return _stepInterval;
+        // We are at the target and its time to stop
+        _stepInterval = 0;
+        _speed = 0.0;
+        _n = 0;
+        if (_autoEnable) disableOutputs();
+
+        return _stepInterval;
     }
 
     if (distanceTo > 0)
@@ -189,6 +192,13 @@ boolean AccelStepper::run()
     return _speed != 0.0 || distanceToGo() != 0;
 }
 
+// Overload do run sendo que a posição é atualizada por vias externas (ex: encoder)
+boolean AccelStepper::run(long position)
+{
+    _currentPos = position;
+    return run();
+}
+
 AccelStepper::AccelStepper(uint8_t interface, uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, bool enable)
 {
     _interface = interface;
@@ -214,6 +224,8 @@ AccelStepper::AccelStepper(uint8_t interface, uint8_t pin1, uint8_t pin2, uint8_
     _cn = 0.0;
     _cmin = 1.0;
     _direction = DIRECTION_CCW;
+
+    _autoEnable = false;
 
     int i;
     for (i = 0; i < 4; i++)
@@ -251,6 +263,8 @@ AccelStepper::AccelStepper(void (*forward)(), void (*backward)())
     _cn = 0.0;
     _cmin = 1.0;
     _direction = DIRECTION_CCW;
+
+    _autoEnable = false;
 
     int i;
     for (i = 0; i < 4; i++)
@@ -333,29 +347,29 @@ void AccelStepper::step(long step)
             step0(step);
             break;
 
-	case DRIVER:
-	    step1(step);
-	    break;
-    
-	case FULL2WIRE:
-	    step2(step);
-	    break;
-    
-	case FULL3WIRE:
-	    step3(step);
-	    break;  
+        case DRIVER:
+            step1(step);
+            break;
+        
+        case FULL2WIRE:
+            step2(step);
+            break;
+        
+        case FULL3WIRE:
+            step3(step);
+            break;  
 
-	case FULL4WIRE:
-	    step4(step);
-	    break;  
+        case FULL4WIRE:
+            step4(step);
+            break;  
 
-	case HALF3WIRE:
-	    step6(step);
-	    break;  
-		
-	case HALF4WIRE:
-	    step8(step);
-	    break;  
+        case HALF3WIRE:
+            step6(step);
+            break;  
+            
+        case HALF4WIRE:
+            step8(step);
+            break;  
     }
 }
 

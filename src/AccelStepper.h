@@ -416,11 +416,18 @@ public:
     /// \return true if the motor is still running to the target position.
     boolean run();
 
+    boolean run(long position);
+
     /// Poll the motor and step it if a step is due, implementing a constant
     /// speed as set by the most recent call to setSpeed(). You must call this as
     /// frequently as possible, but at least once per step interval,
     /// \return true if the motor was stepped.
     boolean runSpeed();
+
+    void autoEnable(bool enabled)
+    {
+        _autoEnable = enabled;
+    }
 
     /// Sets the maximum permitted speed. The run() function will accelerate
     /// up to the speed set by this function.
@@ -723,6 +730,8 @@ private:
 
     /// Min step size in microseconds based on maxSpeed
     float _cmin; // at max speed
+
+    bool _autoEnable;
 
 };
 
