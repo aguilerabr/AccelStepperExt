@@ -211,6 +211,7 @@ AccelStepper::AccelStepper(uint8_t interface, uint8_t pin1, uint8_t pin2, uint8_
     _stepInterval = 0;
     _minPulseWidth = 1;
     _enablePin = 0xff;
+    _enablePin2 = 0xff;
     _lastStepTime = 0;
     _pin[0] = pin1;
     _pin[1] = pin2;
@@ -249,6 +250,7 @@ AccelStepper::AccelStepper(void (*forward)(), void (*backward)())
     _stepInterval = 0;
     _minPulseWidth = 1;
     _enablePin = 0xff;
+    _enablePin2 = 0xff;
     _lastStepTime = 0;
     _pin[0] = 0;
     _pin[1] = 0;
@@ -591,6 +593,12 @@ void    AccelStepper::disableOutputs()
         pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, LOW ^ _enableInverted);
     }
+    if (_enablePin2 != 0xff)
+    {
+        pinMode(_enablePin2, OUTPUT);
+        digitalWrite(_enablePin2, LOW ^ _enableInverted);
+        log_d("2 disable");
+    }
 }
 
 void    AccelStepper::enableOutputs()
@@ -615,6 +623,12 @@ void    AccelStepper::enableOutputs()
         pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, HIGH ^ _enableInverted);
     }
+    if (_enablePin2 != 0xff)
+    {
+        pinMode(_enablePin2, OUTPUT);
+        digitalWrite(_enablePin2, HIGH ^ _enableInverted);
+        log_d("2 enable");
+    }
 }
 
 void AccelStepper::setMinPulseWidth(unsigned int minWidth)
@@ -622,15 +636,22 @@ void AccelStepper::setMinPulseWidth(unsigned int minWidth)
     _minPulseWidth = minWidth;
 }
 
-void AccelStepper::setEnablePin(uint8_t enablePin)
+void AccelStepper::setEnablePin(uint8_t enablePin, uint8_t enablePin2)
 {
     _enablePin = enablePin;
+    _enablePin2 = enablePin2;
 
     // This happens after construction, so init pin now.
     if (_enablePin != 0xff)
     {
         pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, HIGH ^ _enableInverted);
+    }
+
+    if (_enablePin2 != 0xff)
+    {
+        pinMode(_enablePin2, OUTPUT);
+        digitalWrite(_enablePin2, HIGH ^ _enableInverted);
     }
 }
 

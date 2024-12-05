@@ -539,9 +539,10 @@ public:
     /// Otherwise, if a pin is set, the pin will be turned on when 
     /// enableOutputs() is called and switched off when disableOutputs() 
     /// is called.
-    /// \param[in] enablePin Arduino digital pin number for motor enable
+    /// \param[in] enablePin Arduino digital pin number for motor1 enable
+    /// \param[in] enablePin2 Arduino digital pin number for motor2 enable
     /// \sa setPinsInverted
-    void    setEnablePin(uint8_t enablePin = 0xff);
+    void    setEnablePin(uint8_t enablePin = 0xff, uint8_t enablePin2 = 0xFF);
 
     /// Sets the inversion for stepper driver pins
     /// \param[in] directionInvert True for inverted direction pin, false for non-inverted
@@ -712,6 +713,9 @@ private:
 
     /// Enable pin for stepper driver, or 0xFF if unused.
     uint8_t        _enablePin;
+
+    /// Enable2 pin for stepper driver, or 0xFF if unused.   
+    uint8_t        _enablePin2;
 
     /// The pointer to a forward-step procedure
     void (*_forward)();
