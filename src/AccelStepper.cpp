@@ -597,7 +597,6 @@ void    AccelStepper::disableOutputs()
     {
         pinMode(_enablePin2, OUTPUT);
         digitalWrite(_enablePin2, LOW ^ _enableInverted);
-        log_d("2 disable");
     }
 }
 
@@ -627,7 +626,6 @@ void    AccelStepper::enableOutputs()
     {
         pinMode(_enablePin2, OUTPUT);
         digitalWrite(_enablePin2, HIGH ^ _enableInverted);
-        log_d("2 enable");
     }
 }
 
